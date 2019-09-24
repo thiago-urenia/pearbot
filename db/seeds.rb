@@ -5,3 +5,10 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+@pool = Pool.create( slack_channel: "Fabulous Channel")
+
+11.times { PoolEntry.create(pool: @pool, user: User.create(slack_id: SecureRandom.hex)) }
+PoolEntry.create(pool: @pool, user: User.create(slack_id: SecureRandom.hex), status: 'unavailable')
+
+@round = Round.create(pool: @pool)
