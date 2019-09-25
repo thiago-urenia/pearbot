@@ -1,5 +1,5 @@
 class Pool < ApplicationRecord
-  has_many :pool_entries
+  has_many :pool_entries, dependent: :destroy
 
   has_many :users, through: :pool_entries
   has_many :available_entries, -> { where(status: "available") }, source: :users, class_name: "PoolEntry"

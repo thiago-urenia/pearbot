@@ -9,6 +9,7 @@ class RoundCreator
     @round = Round.create(pool: @pool)
 
     sliced_users.each { |users|  @round.pairings.create(users: users) }
+    @round
   end
 
   private
