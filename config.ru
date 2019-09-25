@@ -7,7 +7,7 @@ Dotenv.load
 
 Thread.abort_on_exception = true
 Thread.new do
-  SlackPearbot::Bot.run
+  Pearbot::Bot.run
 end
 
 run Rails.application
