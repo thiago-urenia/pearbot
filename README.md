@@ -1,24 +1,33 @@
-# README
+# Pearbot
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Getting started
 
-Things you may want to cover:
+### Setup a Slack bot
+First clone the repo into a new folder `pearbot`
 
-* Ruby version
+In Slack administration create a new Bot Integration under [services/new/bot](http://slack.com/services/new/bot). On the next screen, note the API token.
 
-* System dependencies
+In your `pearbot` root folder, create a `.env` file with the API token from above.
 
-* Configuration
+```
+SLACK_API_TOKEN=...
+```
 
-* Database creation
+### Run your server
+Run your rails server locally
 
-* Database initialization
+```
+bundle exec rails s
+```
 
-* How to run the test suite
+Alteratively, start it via Foreman:
 
-* Services (job queues, cache servers, search engines, etc.)
+```
+foreman start
+```
+### Test commands
 
-* Deployment instructions
+To test everything is working correctly, start a conversion with your bot in Slack. Or invite the bot to a channel via `/invite [bot name]` and send it a calculate command with `[bot name] calculate 2+2`.
+It will respond with 4.
 
-* ...
+NB: In a direct conversation with the bot, you can simply ask the command directly without calling its name eg `calculate 2+2`)
