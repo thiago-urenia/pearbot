@@ -20,6 +20,7 @@ gem 'puma', '~> 3.11'
 # gem 'image_processing', '~> 1.2'
 #
 gem 'slack-ruby-bot'
+gem 'GiphyClient'
 gem 'dotenv'
 gem 'celluloid-io'
 

@@ -10,22 +10,40 @@ module Pearbot
           end
         end
 
-        client.say(channel: data.channel, text: 'Started a new pool')
+        client.say(channel: data.channel, text: 'Started a new pool', gif: 'ready')
       end
 
       command 'destroy pool' do |client, data, _match|
         pool = ::Pool.find_by(slack_channel: data.channel)
         pool.destroy
 
-        client.say(channel: data.channel, text: 'Destroyed the pool')
+        client.say(channel: data.channel, text: 'Destroyed the pool', gif: 'destroy')
       end
 
       command 'new round' do |client, data, _match|
         pool = ::Pool.find_by(slack_channel: data.channel)
         round = ::RoundCreator.new(pool).create
+
+        client.say(channel: data.channel, text: "The next round of pairs are: ", gif: 'friendship')
         round.pairings.each do |pairing|
           client.say(channel: data.channel, text: pairing.to_s)
         end
+      end
+
+      command 'snooze' do |client, data, _match|
+        pool = ::Pool.find_by(slack_channel: data.channel)
+        user = ::User.find_by(slack_id: data.user)
+        entry = ::PoolEntry.find_by(pool: pool, user: user)
+        entry.update_attributes(status: 'unavailable')
+        client.say(channel: data.channel, text: "We've snoozed pairing for you", gif: 'sleep')
+      end
+
+      command 'resume' do |client, data, _match|
+        pool = ::Pool.find_by(slack_channel: data.channel)
+        user = ::User.find_by(slack_id: data.user)
+        entry = ::PoolEntry.find_by(pool: pool, user: user)
+        entry.update_attributes(status: 'available')
+        client.say(channel: data.channel, text: "We've enabled pairing for you", gif: 'alert')
       end
 
       # command 'check pool' do |client, data, _match|
