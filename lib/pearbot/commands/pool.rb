@@ -2,48 +2,59 @@ module Pearbot
   module Commands
     class Pool < SlackRubyBot::Commands::Base
       command 'new pool' do |client, data, _match|
-        pool = ::Pool.create(slack_channel: data.channel)
-        client.channels.fetch(data.channel).members.each do |member_id|
-          user = client.users.fetch(member_id)
-          if !user.is_bot
-            ::PoolEntry.create(pool: pool, user: ::User.find_or_create_by(slack_id: user.id))
-          end
-        end
+        pool = ::Pool.new(slack_channel_id: data.channel)
 
-        client.say(channel: data.channel, text: 'Started a new pool', gif: 'ready')
+        if pool.save
+          client.channels.fetch(data.channel).members.each do |member_id|
+            user = client.users.fetch(member_id)
+            if !user.is_bot
+              ::PoolEntry.create(pool: pool, user: ::User.find_or_create_by(slack_user_id: user.id))
+            end
+          end
+
+          client.say(channel: data.channel, text: "Started a new pool for <##{data.channel}> with #{pool.users.count} participants", gif: 'ready')
+        else
+          client.say(channel: data.channel, text: "A pool for <##{data.channel}> already exists.")
+        end
       end
 
       command 'destroy pool' do |client, data, _match|
-        pool = ::Pool.find_by(slack_channel: data.channel)
-        pool.destroy
+        pool = ::Pool.find_by(slack_channel_id: data.channel)
 
-        client.say(channel: data.channel, text: 'Destroyed the pool', gif: 'destroy')
+        if pool.destroy
+          client.say(channel: data.channel, text: "Destroyed the pool for <##{data.channel}>", gif: 'destroy')
+        else
+          client.say(channel: data.channel, text: "No pool for <##{data.channel}> exists", gif: 'destroy')
+        end
       end
 
       command 'new round' do |client, data, _match|
-        pool = ::Pool.find_by(slack_channel: data.channel)
-        round = ::RoundCreator.new(pool).create
+        pool = ::Pool.find_by(slack_channel_id: data.channel)
 
-        client.say(channel: data.channel, text: "The next round of pairs are: ", gif: 'friendship')
-        round.pairings.each do |pairing|
-          client.say(channel: data.channel, text: pairing.to_s)
+        if round = ::RoundCreator.new(pool).create
+          client.say(channel: data.channel, text: "The next round of pairs are: ", gif: 'friendship')
+          round.pairings.each do |pairing|
+            client.say(channel: data.channel, text: pairing.to_s)
+          end
         end
       end
 
       command 'snooze' do |client, data, _match|
-        pool = ::Pool.find_by(slack_channel: data.channel)
-        user = ::User.find_by(slack_id: data.user)
+        pool = ::Pool.find_by(slack_channel_id: data.channel)
+        user = ::User.find_by(slack_user_id: data.user)
         entry = ::PoolEntry.find_by(pool: pool, user: user)
-        entry.update_attributes(status: 'unavailable')
-        client.say(channel: data.channel, text: "We've snoozed pairing for you", gif: 'sleep')
+        if entry.update_attributes(status: 'unavailable')
+          client.say(channel: data.channel, text: "We've snoozed pairing for you", gif: 'sleep')
+        end
       end
 
       command 'resume' do |client, data, _match|
-        pool = ::Pool.find_by(slack_channel: data.channel)
-        user = ::User.find_by(slack_id: data.user)
+        pool = ::Pool.find_by(slack_channel_id: data.channel)
+        user = ::User.find_by(slack_user_id: data.user)
         entry = ::PoolEntry.find_by(pool: pool, user: user)
-        entry.update_attributes(status: 'available')
-        client.say(channel: data.channel, text: "We've enabled pairing for you", gif: 'alert')
+        if entry.update_attributes(status: 'available')
+          client.say(channel: data.channel, text: "We've enabled pairing for you", gif: 'alert')
+        end
       end
 
       # command 'check pool' do |client, data, _match|
@@ -69,6 +80,7 @@ module Pearbot
       # command 'new round' do |client, data, _match|
       #   client.say(channel: data.channel, text: 'running new round')
       # end
+
     end
   end
 end
