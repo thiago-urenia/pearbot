@@ -1,6 +1,6 @@
-class CreateUsers < ActiveRecord::Migration[6.0]
+class CreateParticipants < ActiveRecord::Migration[6.0]
   def change
-    create_table :users do |t|
+    create_table :participants do |t|
       t.string :slack_user_id, null: false
       t.timestamps
 

@@ -8,11 +8,11 @@ module Pearbot
           client.channels.fetch(data.channel).members.each do |member_id|
             user = client.users.fetch(member_id)
             if !user.is_bot
-              ::PoolEntry.create(pool: pool, user: ::User.find_or_create_by(slack_user_id: user.id))
+              ::PoolEntry.create(pool: pool, participant: ::Participant.find_or_create_by(slack_user_id: user.id))
             end
           end
 
-          client.say(channel: data.channel, text: "Started a new pool for <##{data.channel}> with #{pool.users.count} participants", gif: 'ready')
+          client.say(channel: data.channel, text: "Started a new pool for <##{data.channel}> with #{pool.participants.count} participants", gif: 'ready')
         else
           client.say(channel: data.channel, text: "A pool for <##{data.channel}> already exists.")
         end
@@ -41,8 +41,8 @@ module Pearbot
 
       command 'snooze' do |client, data, _match|
         pool = ::Pool.find_by(slack_channel_id: data.channel)
-        user = ::User.find_by(slack_user_id: data.user)
-        entry = ::PoolEntry.find_by(pool: pool, user: user)
+        participant = ::Participant.find_by(slack_user_id: data.user)
+        entry = ::PoolEntry.find_by(pool: pool, participant: participant)
         if entry.update_attributes(status: 'unavailable')
           client.say(channel: data.channel, text: "We've snoozed pairing for you", gif: 'sleep')
         end
@@ -50,8 +50,8 @@ module Pearbot
 
       command 'resume' do |client, data, _match|
         pool = ::Pool.find_by(slack_channel_id: data.channel)
-        user = ::User.find_by(slack_user_id: data.user)
-        entry = ::PoolEntry.find_by(pool: pool, user: user)
+        participant = ::Participant.find_by(slack_user_id: data.user)
+        entry = ::PoolEntry.find_by(pool: pool, participant: participant)
         if entry.update_attributes(status: 'available')
           client.say(channel: data.channel, text: "We've enabled pairing for you", gif: 'alert')
         end

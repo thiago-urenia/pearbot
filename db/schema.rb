@@ -19,21 +19,27 @@ ActiveRecord::Schema.define(version: 2019_09_24_112350) do
     t.index ["round_id"], name: "index_pairings_on_round_id"
   end
 
-  create_table "pairings_users", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "pairings_participants", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.bigint "pairing_id", null: false
-    t.bigint "user_id", null: false
+    t.bigint "participant_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["pairing_id"], name: "index_pairings_users_on_pairing_id"
-    t.index ["user_id"], name: "index_pairings_users_on_user_id"
+    t.index ["pairing_id"], name: "index_pairings_participants_on_pairing_id"
+    t.index ["participant_id"], name: "index_pairings_participants_on_participant_id"
+  end
+
+  create_table "participants", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "slack_user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "pool_entries", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.bigint "pool_id"
-    t.bigint "user_id"
+    t.bigint "participant_id"
     t.string "status", default: "available"
+    t.index ["participant_id"], name: "index_pool_entries_on_participant_id"
     t.index ["pool_id"], name: "index_pool_entries_on_pool_id"
-    t.index ["user_id"], name: "index_pool_entries_on_user_id"
   end
 
   create_table "pools", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
@@ -47,12 +53,6 @@ ActiveRecord::Schema.define(version: 2019_09_24_112350) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["pool_id"], name: "index_rounds_on_pool_id"
-  end
-
-  create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.string "slack_user_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
   end
 
 end
