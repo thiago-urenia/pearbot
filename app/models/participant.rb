@@ -4,4 +4,22 @@ class Participant < ApplicationRecord
   has_and_belongs_to_many :pairings
 
   validates :slack_user_id, uniqueness: true
+
+  def slack_user
+    Pearbot::SlackApi::User(slack_user_id)
+  end
+
+  def join_pool(pool)
+    PoolEntry.create(participant: self, pool: pool)
+  end
+
+  def leave_pool(pool)
+    PoolEntry.find_by(participant: self, pool: pool).destroy
+  end
+
+  private
+
+  def client
+    @client ||= Pearbot::SlackWebClient.new
+  end
 end
