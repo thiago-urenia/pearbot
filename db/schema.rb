@@ -22,6 +22,8 @@ ActiveRecord::Schema.define(version: 2019_09_24_112350) do
   create_table "pairings_users", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.bigint "pairing_id", null: false
     t.bigint "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["pairing_id"], name: "index_pairings_users_on_pairing_id"
     t.index ["user_id"], name: "index_pairings_users_on_user_id"
   end
@@ -35,7 +37,7 @@ ActiveRecord::Schema.define(version: 2019_09_24_112350) do
   end
 
   create_table "pools", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.string "slack_channel"
+    t.string "slack_channel_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -48,7 +50,7 @@ ActiveRecord::Schema.define(version: 2019_09_24_112350) do
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.string "slack_id"
+    t.string "slack_user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

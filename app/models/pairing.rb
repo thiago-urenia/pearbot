@@ -4,8 +4,8 @@ class Pairing < ApplicationRecord
 
 
   def to_s
-    # users.map(&:slack_id)
-    mentions = users.map{ |user| "<@#{user.slack_id}>" }
+    # users.map(&:slack_user_id)
+    mentions = users.map{ |user| "<@#{user.slack_user_id}>" }
     mentions.to_sentence
     # mentions.join(" & ")
   end

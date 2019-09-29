@@ -5,6 +5,8 @@ class Pool < ApplicationRecord
   has_many :available_entries, -> { where(status: "available") }, source: :users, class_name: "PoolEntry"
   has_many :rounds
 
+  validates :slack_channel_id, uniqueness: true
+
   def available_users
     available_entries.map(&:user)
   end
