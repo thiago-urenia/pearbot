@@ -106,8 +106,7 @@ module Pearbot
           client.say(channel: data.channel, text: "🙅‍♀️No pool for <##{data.channel}> exists ", gif: 'no')
         else
           participant = ::Participant.find_by(slack_user_id: data.user)
-          entry = ::PoolEntry.find_by(pool: pool, participant: participant)
-          if entry.update_attributes(status: 'unavailable')
+          if participant.snooze_pool(pool)
             client.say(channel: data.channel, text: "<@#{participant.slack_user_id}> we've snoozed pairing for you in <##{data.channel}>. 😴", gif: 'sleep')
           end
         end
@@ -120,8 +119,7 @@ module Pearbot
           client.say(channel: data.channel, text: "🙅‍♀️No pool for <##{data.channel}> exists ", gif: 'no')
         else
           participant = ::Participant.find_by(slack_user_id: data.user)
-          entry = ::PoolEntry.find_by(pool: pool, participant: participant)
-          if entry.update_attributes(status: 'available')
+          if participant.resume_pool(pool)
             client.say(channel: data.channel, text: "<@#{participant.slack_user_id}> we've resuming pairing for you in <##{data.channel}>. 😊", gif: 'alert')
           end
         end

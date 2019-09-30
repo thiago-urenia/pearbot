@@ -18,11 +18,23 @@ class Participant < ApplicationRecord
     PoolEntry.create(participant: self, pool: pool)
   end
 
+  def snooze_pool(pool)
+    entry(pool).snooze
+  end
+
+  def resume_pool(pool)
+    entry(pool).resume
+  end
+
   def leave_pool(pool)
-    PoolEntry.find_by(participant: self, pool: pool).destroy
+    entry(pool).destroy
   end
 
   private
+
+  def entry(pool)
+    PoolEntry.find_by(participant: self, pool: pool)
+  end
 
   def client
     @client ||= Pearbot::SlackWebClient.new

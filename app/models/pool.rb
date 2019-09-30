@@ -2,8 +2,8 @@ class Pool < ApplicationRecord
   has_many :pool_entries, dependent: :destroy
 
   has_many :participants, through: :pool_entries
-  has_many :available_entries, -> { where(status: "available") }, source: :participants, class_name: "PoolEntry"
-  has_many :snoozed_entries, -> { where(status: "snoozed") }, source: :participants, class_name: "PoolEntry"
+  has_many :available_entries, -> { where(status: :available) }, source: :participants, class_name: "PoolEntry"
+  has_many :snoozed_entries, -> { where(status: :snoozed) }, source: :participants, class_name: "PoolEntry"
 
   has_many :rounds
 
