@@ -12,14 +12,17 @@
 
 ActiveRecord::Schema.define(version: 2019_09_24_112350) do
 
-  create_table "pairings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "pairings", force: :cascade do |t|
     t.bigint "round_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["round_id"], name: "index_pairings_on_round_id"
   end
 
-  create_table "pairings_participants", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "pairings_participants", id: false, force: :cascade do |t|
     t.bigint "pairing_id", null: false
     t.bigint "participant_id", null: false
     t.datetime "created_at", precision: 6, null: false
@@ -28,13 +31,13 @@ ActiveRecord::Schema.define(version: 2019_09_24_112350) do
     t.index ["participant_id"], name: "index_pairings_participants_on_participant_id"
   end
 
-  create_table "participants", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "participants", force: :cascade do |t|
     t.string "slack_user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "pool_entries", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "pool_entries", force: :cascade do |t|
     t.bigint "pool_id"
     t.bigint "participant_id"
     t.string "status", default: "available"
@@ -42,13 +45,13 @@ ActiveRecord::Schema.define(version: 2019_09_24_112350) do
     t.index ["pool_id"], name: "index_pool_entries_on_pool_id"
   end
 
-  create_table "pools", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "pools", force: :cascade do |t|
     t.string "slack_channel_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "rounds", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "rounds", force: :cascade do |t|
     t.bigint "pool_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
