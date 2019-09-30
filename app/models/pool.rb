@@ -3,6 +3,8 @@ class Pool < ApplicationRecord
 
   has_many :participants, through: :pool_entries
   has_many :available_entries, -> { where(status: "available") }, source: :participants, class_name: "PoolEntry"
+  has_many :snoozed_entries, -> { where(status: "snoozed") }, source: :participants, class_name: "PoolEntry"
+
   has_many :rounds
 
   validates :slack_channel_id, uniqueness: true
@@ -25,16 +27,24 @@ class Pool < ApplicationRecord
     add(joiners)
   end
 
-
   def available_participants
     available_entries.map(&:participant)
   end
 
-  def find_pairings(round)
-    pairings = available_participants.shuffle.each_slice(2).to_a
-    pairings.each do |pair|
-      Pairing.create(round: round, participants: pair)
-    end
+  def list_available_participants
+    Participant.mention_list(available_participants)
+  end
+
+  def snoozed_participants
+    snoozed_entries.map(&:participant)
+  end
+
+  def list_snoozed_participants
+    Participant.mention_list(snoozed_participants)
+  end
+
+  def latest_round
+    rounds.last
   end
 
   private
