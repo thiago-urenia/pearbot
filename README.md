@@ -7,10 +7,26 @@ First clone the repo into a new folder `pearbot`
 
 In Slack administration create a new Bot Integration under [services/new/bot](http://slack.com/services/new/bot). On the next screen, note the API token.
 
-In your `pearbot` root folder, create a `.env` file with the API token from above.
+In your `pearbot` root folder, create a `.env` file with the API token from above. To enable gifs, you will need to
+add a Giphy API token, you may use the public token `dc6zaTOxFJmzC` for testing.
 
 ```
 SLACK_API_TOKEN=...
+GIPHY_API_KEY=...
+```
+
+### Set up your database
+You will need to create your local DBs:
+
+```
+bundle exec rake db:create
+bundle exec rake db:migrate
+```
+
+You can optionally seed your database with dummy data:
+
+```
+bundle exec rake db:seed
 ```
 
 ### Run your server
@@ -25,9 +41,16 @@ Alteratively, start it via Foreman:
 ```
 foreman start
 ```
-### Test commands
+### Interacting with the bot
 
-To test everything is working correctly, start a conversion with your bot in Slack. Or invite the bot to a channel via `/invite [bot name]` and send it a calculate command with `[bot name] calculate 2+2`.
-It will respond with 4.
+#### Channel commands
+Invite the bot to a channel via `/invite pearbot`. You can interact with the bot either by calling `pearbot` or mentioning `@pearbot`.
 
-NB: In a direct conversation with the bot, you can simply ask the command directly without calling its name eg `calculate 2+2`)
+- **setup**: Starts a new pool for the current channel, you should only need to do this once.
+- **refresh**: Updates pool participants to only the current members of the channel.
+- **status**: Check some status information about the pool for the current channel, if it exists.
+- **destroy**: Destroys the pool for the current channel.
+- **pair**: Run a new round of pairing with all active participants from the channel pool. Snoozed partipants will be ignored.
+- **last**: Show the results of the last pairing round again. (Note: this will re-notify folk)
+- **snooze me**: Turn off pairing for the current user within this channel pool.
+- **resume me**: Turn on pairing for the current user within this channel pool.
