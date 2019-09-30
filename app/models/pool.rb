@@ -7,7 +7,7 @@ class Pool < ApplicationRecord
 
   has_many :rounds
 
-  validates :slack_channel_id, uniqueness: true
+  validates :slack_channel_id, presence: true, uniqueness: true
 
   def slack_channel
     Pearbot::SlackApi::Channel.new(slack_channel_id)

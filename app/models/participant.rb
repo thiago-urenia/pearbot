@@ -3,7 +3,8 @@ class Participant < ApplicationRecord
   has_many :pools, through: :pool_entries
   has_and_belongs_to_many :pairings
 
-  validates :slack_user_id, uniqueness: true
+  validates :slack_user_id, presence: true, uniqueness: true
+
 
   def self.mention_list(participants)
     mentions = participants.map{ |participant| "<@#{participant.slack_user_id}>" }
