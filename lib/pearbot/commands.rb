@@ -9,6 +9,13 @@ module Pearbot
           ::Participant.find_by(slack_user_id: match)
         end
       end
+
+      def self.format_date_time(timestamp)
+        unix = timestamp.to_i
+        fallback = timestamp.strftime("%A, %B #{timestamp.day.ordinalize}, %Y at %H.%M UTC")
+
+        "<!date^#{unix}^{date_long_pretty} at {time}|#{fallback}>"
+      end
     end
 
     class Setup < PearbotCommand
@@ -87,7 +94,7 @@ module Pearbot
           client.say(channel: data.channel, text: "*Snoozed*: #{pool.list_snoozed_participants}") if pool.snoozed_participants.any?
 
           if pool.rounds.any?
-            client.say(channel: data.channel, text: "🍐We last drew pairs on #{pool.latest_round.created_at.strftime("%A, %d %b %Y at %H:%M")}")
+            client.say(channel: data.channel, text: "🍐 Last drew pairs: #{format_date_time(pool.latest_round.created_at)}")
           end
 
           client.say(channel: data.channel, gif: 'janet')
@@ -179,7 +186,7 @@ module Pearbot
           if pool.rounds.any?
             client.say(
               channel: data.channel,
-              text: "🍐We last drew pairs on #{pool.latest_round.created_at.strftime("%A, %d %b %Y at %H:%M")}"
+              text: "🍐Last drew pairs: #{format_date_time(pool.latest_round.created_at)}"
             )
 
             pool.latest_round.pairings.each do |pairing|
