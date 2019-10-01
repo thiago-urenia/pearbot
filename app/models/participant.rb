@@ -10,6 +10,11 @@ class Participant < ApplicationRecord
     mentions.to_sentence
   end
 
+  def self.name_list(participants)
+    names = participants.map{ |participant| participant.slack_user.real_name }
+    names.to_sentence
+  end
+
   def slack_user
     Pearbot::SlackApi::User.new(slack_user_id)
   end

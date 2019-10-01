@@ -32,7 +32,7 @@ class Pool < ApplicationRecord
   end
 
   def list_available_participants
-    Participant.mention_list(available_participants)
+    Participant.name_list(available_participants)
   end
 
   def snoozed_participants
@@ -40,7 +40,7 @@ class Pool < ApplicationRecord
   end
 
   def list_snoozed_participants
-    Participant.mention_list(snoozed_participants)
+    Participant.name_list(snoozed_participants)
   end
 
   def latest_round

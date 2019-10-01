@@ -145,7 +145,7 @@ module Pearbot
           client.say(channel: data.channel, text: "👯‍♀️The next round of pairs are: ")
 
           round.pairings.each do |pairing|
-            client.say(channel: data.channel, text: pairing.to_s)
+            client.say(channel: data.channel, text: pairing.to_mentions)
           end
 
           client.say(channel: data.channel, gif: 'friendship')
@@ -166,7 +166,7 @@ module Pearbot
       help do
         title 'remind'
         desc 'ask me to remind you about the last round of pairs'
-        long_desc 'Shows the results of the last pairing round again. (Note: this will re-notify folk)'
+        long_desc 'Shows the results of the last pairing round again.'
       end
 
       def self.call(client, data, match)
@@ -183,7 +183,7 @@ module Pearbot
             )
 
             pool.latest_round.pairings.each do |pairing|
-              client.say(channel: data.channel, text: pairing.to_s)
+              client.say(channel: data.channel, text: pairing.to_names)
             end
 
             client.say(channel: data.channel, gif: 'party')

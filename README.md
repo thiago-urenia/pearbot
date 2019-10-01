@@ -52,6 +52,6 @@ To interact with Pearbot, ask it variations of the following commands:
 - **status**: Check some status information about the pool for the current channel, if it exists.
 - **destroy**: Destroys the pool for the current channel.
 - **pair**: Run a new round of pairing with all active participants from the channel pool. Snoozed partipants will be ignored.
-- **remind**: Show the results of the last pairing round again. (Note: this will re-notify folk)
+- **remind**: Show the results of the last pairing round again.
 - **snooze me**: Turn off pairing for the current user within this channel pool.
 - **resume me**: Turn on pairing for the current user within this channel pool.
