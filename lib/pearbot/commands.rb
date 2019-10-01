@@ -81,7 +81,7 @@ module Pearbot
         if pool.blank?
           client.say(channel: data.channel, text: "🙅‍♀️No pool for <##{data.channel}> exists.", gif: 'no')
         else
-          client.say(channel: data.channel, text: "💁🏻‍♀️There are currently #{pool.reload.participants.count} participants enrolled in the <##{data.channel}> pool")
+          client.say(channel: data.channel, text: ":janet: There are currently #{pool.reload.participants.count} participants enrolled in the <##{data.channel}> pool")
 
           client.say(channel: data.channel, text: "*Available*: #{pool.list_available_participants}") if pool.available_participants.any?
           client.say(channel: data.channel, text: "*Snoozed*: #{pool.list_snoozed_participants}") if pool.snoozed_participants.any?
@@ -202,7 +202,7 @@ module Pearbot
 
       help do
         title 'snooze me/@user'
-        desc 'Ask to be snoozed or snooze another user to temporarily turn off pairing in this pool'
+        desc 'ask to be snoozed or snooze another user to temporarily turn off pairing in this pool'
         long_desc 'Temporarily disables pairing for a given user within this channel pool.'
       end
 
@@ -226,7 +226,7 @@ module Pearbot
 
       help do
         title 'resume me/@user'
-        desc 'Ask to resume yourself or another user to turn continue pairing in this pool'
+        desc 'ask to resume yourself or another user to continue pairing in this pool'
         long_desc 'Re-enables pairing for a given user within this channel pool.'
       end
 
