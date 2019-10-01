@@ -25,6 +25,8 @@ gem 'dotenv'
 gem 'async-websocket', '~>0.8.0'
 # gem 'celluloid-io'
 # gem 'faye-websocket'
+gem 'newrelic_rpm'
+
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
