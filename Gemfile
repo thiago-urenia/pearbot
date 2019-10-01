@@ -38,6 +38,10 @@ group :development, :test do
   gem "faker"
   gem 'rspec-rails'
   gem 'factory_bot_rails'
+  gem 'rack-test'
+  gem 'rspec'
+  gem 'vcr'
+  gem 'webmock'
 end
 
 group :test do

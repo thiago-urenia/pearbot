@@ -5,14 +5,13 @@ class Participant < ApplicationRecord
 
   validates :slack_user_id, presence: true, uniqueness: true
 
-
   def self.mention_list(participants)
     mentions = participants.map{ |participant| "<@#{participant.slack_user_id}>" }
     mentions.to_sentence
   end
 
   def slack_user
-    Pearbot::SlackApi::User(slack_user_id)
+    Pearbot::SlackApi::User.new(slack_user_id)
   end
 
   def join_pool(pool)
@@ -35,9 +34,5 @@ class Participant < ApplicationRecord
 
   def entry(pool)
     PoolEntry.find_by(participant: self, pool: pool)
-  end
-
-  def client
-    @client ||= Pearbot::SlackWebClient.new
   end
 end

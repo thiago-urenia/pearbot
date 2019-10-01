@@ -49,10 +49,6 @@ class Pool < ApplicationRecord
 
   private
 
-  def client
-    @client ||= Pearbot::SlackWebClient.new
-  end
-
   def remove(user_ids)
     user_ids.each do |user_id|
       participant = Participant.find_by(slack_user_id: user_id)

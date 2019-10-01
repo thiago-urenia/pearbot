@@ -18,6 +18,10 @@ module Pearbot
       def is_bot?
         info.is_bot
       end
+
+      def real_name
+        info.real_name
+      end
     end
   end
 end
