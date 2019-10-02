@@ -34,7 +34,10 @@ module Pearbot
 
         if pool.save
           pool.load_participants
-          client.say(channel: data.channel, text: "✨Started a new pool for <##{data.channel}> with #{pool.participants.count} participants.✨", gif: 'hello')
+          message = "✨Started a new pool for <##{data.channel}> with #{pool.participants.count} participants.✨"
+          message += "\n> #{Participant.name_list(pool.participants)}" if pool.participants.any?
+          client.say(channel: data.channel, text: message, gif: 'hello')
+
         else
           client.say(channel: data.channel, text: "🤭A pool for <##{data.channel}> already exists.", gif: 'stuck')
         end
@@ -59,7 +62,10 @@ module Pearbot
 
         if pool.present?
           pool.refresh_participants
-          client.say(channel: data.channel, text: "♻️Refreshing the pool for <##{data.channel}>. There are now #{pool.reload.participants.count} participants", gif: 'reload')
+          message = "♻️Refreshing the pool for <##{data.channel}>."
+          message += "\nThere are now #{pool.reload.participants.count} participants"
+          message += "\n> #{Participant.name_list(pool.participants)}" if pool.participants.any?
+          client.say(channel: data.channel, text: message, gif: 'reload')
         else
           client.say(channel: data.channel, text: "🙅‍♀️No pool for <##{data.channel}> exists.", gif: 'no')
         end
@@ -88,16 +94,12 @@ module Pearbot
         if pool.blank?
           client.say(channel: data.channel, text: "🙅‍♀️No pool for <##{data.channel}> exists.", gif: 'no')
         else
-          client.say(channel: data.channel, text: ":janet: There are currently #{pool.reload.participants.count} participants enrolled in the <##{data.channel}> pool")
+          summary = ":janet: There are currently #{pool.reload.participants.count} participants enrolled in the <##{data.channel}> pool"
+          summary += "\n> 👋 *Available*: #{pool.list_available_participants}" if pool.available_participants.any?
+          summary += "\n> 🛌 *Snoozed*: #{pool.list_snoozed_participants}" if pool.snoozed_participants.any?
+          summary += "\n🍐 Last drew pairs: #{format_date_time(pool.latest_round.created_at)}" if pool.rounds.any?
 
-          client.say(channel: data.channel, text: "*Available*: #{pool.list_available_participants}") if pool.available_participants.any?
-          client.say(channel: data.channel, text: "*Snoozed*: #{pool.list_snoozed_participants}") if pool.snoozed_participants.any?
-
-          if pool.rounds.any?
-            client.say(channel: data.channel, text: "🍐 Last drew pairs: #{format_date_time(pool.latest_round.created_at)}")
-          end
-
-          client.say(channel: data.channel, gif: 'janet')
+          client.say(channel: data.channel, text: summary, gif: 'janet')
         end
       end
     end
@@ -127,6 +129,7 @@ module Pearbot
     class Pair < PearbotCommand
       command /pair/
       command /pairings/
+      command /new pair.*/
       command /draw/
       command /run/
       command /next/
@@ -144,18 +147,21 @@ module Pearbot
         if pool.blank?
           client.say(channel: data.channel, text: "🙅‍♀️No pool for <##{data.channel}> exists ", gif: 'no')
 
+        elsif pool.available_participants.empty?
+          client.say(channel: data.channel, text: ":dusty_stick: Looks like nobody's available for pairing", gif: 'duster')
+
         elsif pool.available_participants.count == 1
           participant = pool.available_participants.first
           client.say(channel: data.channel, text: "<@#{participant.slack_user_id}> looks like you're on your own 😶", gif: 'alone')
 
         elsif round = ::RoundCreator.new(pool).create
-          client.say(channel: data.channel, text: "👯‍♀️The next round of pairs are: ")
+          formatted_pairings = round.pairings.map(&:to_mentions).join("\n")
 
-          round.pairings.each do |pairing|
-            client.say(channel: data.channel, text: pairing.to_mentions)
-          end
-
-          client.say(channel: data.channel, gif: 'friendship')
+          client.say(
+            channel: data.channel,
+            text: "👯‍♀️The next round of pairs are:\n#{formatted_pairings}",
+            gif: 'friendship'
+          )
         end
       end
     end
@@ -181,23 +187,15 @@ module Pearbot
 
         if pool.blank?
           client.say(channel: data.channel, text: "🙅‍♀️No pool for <##{data.channel}> exists.", gif: 'no')
+        elsif pool.rounds.any?
+          formatted_pairings = pool.latest_round.pairings.map { |pairing| "> #{pairing.to_names}" }.join("\n")
+          client.say(
+            channel: data.channel,
+            text: "🍐Last drew pairs: #{format_date_time(pool.latest_round.created_at)}\n#{formatted_pairings}",
+            gif: 'party'
+          )
         else
-
-          if pool.rounds.any?
-            client.say(
-              channel: data.channel,
-              text: "🍐Last drew pairs: #{format_date_time(pool.latest_round.created_at)}"
-            )
-
-            pool.latest_round.pairings.each do |pairing|
-              client.say(channel: data.channel, text: pairing.to_names)
-            end
-
-            client.say(channel: data.channel, gif: 'party')
-
-          else
-            client.say(channel: data.channel, text: ":dusty_stick: You haven't ran any rounds in <##{data.channel}>", gif: 'duster')
-          end
+          client.say(channel: data.channel, text: ":dusty_stick: You haven't ran any rounds in <##{data.channel}>", gif: 'duster')
         end
       end
     end
