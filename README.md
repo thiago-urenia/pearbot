@@ -46,6 +46,8 @@ foreman start
 #### Channel commands
 Invite the bot to a channel via `/invite pearbot`. You can interact with the bot by mentioning `@pearbot` directly. Alternatively you can start your command with `pearbot` or `🍐`
 
+Run - `pearbot help` for help with commands.
+
 To interact with Pearbot, ask it variations of the following commands:
 - **setup**: Starts a new pool for the current channel, you should only need to do this once.
 - **refresh**: Updates pool participants to only the current members of the channel.
@@ -53,5 +55,6 @@ To interact with Pearbot, ask it variations of the following commands:
 - **destroy**: Destroys the pool for the current channel.
 - **pair**: Run a new round of pairing with all active participants from the channel pool. Snoozed partipants will be ignored.
 - **remind**: Show the results of the last pairing round again.
-- **snooze me**: Turn off pairing for the current user within this channel pool.
-- **resume me**: Turn on pairing for the current user within this channel pool.
+- **snooze me/@user** - Ask to be snoozed or snooze another user to temporarily turn off pairing in this pool
+- **resume me/@user** - Ask to resume yourself or another user to continue pairing in this pool
+
