@@ -2,6 +2,13 @@ module Pearbot
   module Commands
 
     class PearbotCommand < SlackRubyBot::Commands::Base
+
+      def self.find_refreshed_pool(slack_channel_id)
+        pool = ::Pool.find_by(slack_channel_id: slack_channel_id)
+        pool.refresh_participants if pool.present?
+        pool
+      end
+
       def self.find_user(client, data, match)
         if match == "me"
           ::Participant.find_by(slack_user_id: data.user)
@@ -89,7 +96,7 @@ module Pearbot
       end
 
       def self.call(client, data, match)
-        pool = ::Pool.find_by(slack_channel_id: data.channel)
+        pool = find_refreshed_pool(data.channel)
 
         if pool.blank?
           client.say(channel: data.channel, text: "🙅‍♀️No pool for <##{data.channel}> exists.", gif: 'no')
@@ -142,7 +149,7 @@ module Pearbot
       end
 
       def self.call(client, data, match)
-        pool = ::Pool.find_by(slack_channel_id: data.channel)
+        pool = find_refreshed_pool(data.channel)
 
         if pool.blank?
           client.say(channel: data.channel, text: "🙅‍♀️No pool for <##{data.channel}> exists ", gif: 'no')
@@ -183,7 +190,7 @@ module Pearbot
       end
 
       def self.call(client, data, match)
-        pool = ::Pool.find_by(slack_channel_id: data.channel)
+        pool = find_refreshed_pool(data.channel)
 
         if pool.blank?
           client.say(channel: data.channel, text: "🙅‍♀️No pool for <##{data.channel}> exists.", gif: 'no')
@@ -212,7 +219,7 @@ module Pearbot
       end
 
       def self.call(client, data, match)
-        pool = ::Pool.find_by(slack_channel_id: data.channel)
+        pool = find_refreshed_pool(data.channel)
         participant = find_user(client, data, match[1])
 
         if pool.blank?
@@ -236,7 +243,7 @@ module Pearbot
       end
 
       def self.call(client, data, match)
-        pool = ::Pool.find_by(slack_channel_id: data.channel)
+        pool = find_refreshed_pool(data.channel)
         participant = find_user(client, data, match[1])
 
         if pool.blank?
