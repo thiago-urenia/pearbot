@@ -27,13 +27,10 @@ module Pearbot
 
     class Setup < PearbotCommand
       command /setup/
-      command /set up/
-      command /new pool/
 
       help do
         title 'setup'
-        desc 'ask me to set up a new pool for the current channel'
-        long_desc 'Starts a new pool for the current channel, you should only need to do this once.'
+        desc 'Start a new pairing pool for the current channel, you will only need to do setup the pool once.'
       end
 
       def self.call(client, data, match)
@@ -53,19 +50,14 @@ module Pearbot
 
     class Refresh < PearbotCommand
       command /refresh/
-      command /reload/
-      command /update/
-      command /sync/
-      command /reset/
 
       help do
         title 'refresh'
-        desc 'ask me to refresh, reload or update the current pool members'
-        long_desc 'Updates pool participants to only the current members of the channel. You should run this regularly to clean up the pool. Note this will only remove users who have left the channel from the pool, snoozed users will remain in the pool unless they leave the channel.'
+        desc 'Refresh the pool so it matches the current members of the channel. You should run this regularly to clean up the pool. Note this will only remove users who have left the channel from the pool, snoozed users will remain in the pool unless they leave the channel.'
       end
 
       def self.call(client, data, match)
-        pool = ::Pool.find_by(slack_channel_id: data.channel)
+        pool = ::Pool.new(slack_channel_id: data.channel)
 
         if pool.present?
           pool.refresh_participants
@@ -81,18 +73,10 @@ module Pearbot
 
     class Status < PearbotCommand
       command /status/
-      command /check.*status/
-      command /status.*check/
-      command /info.*/
-      command /participants/
-      command /users/
-      command /members/
-      command /when/
 
       help do
         title 'status'
-        desc 'ask me for a status check on pool members'
-        long_desc 'Displays status information about the pool members and when they were last paired'
+        desc 'Display status information about the pool members and when they were last paired.'
       end
 
       def self.call(client, data, match)
@@ -113,12 +97,10 @@ module Pearbot
 
     class Destroy < PearbotCommand
       command /destroy/
-      command /delete/
 
       help do
         title 'destroy'
-        desc 'ask me to destroy the pool'
-        long_desc 'Destroys the pool for the current channel. Note: This is destructive and will delete all status information. However, the pool can still be recreated from scratch once destroyed.'
+        desc 'Destroys the pool for the current channel. Note: This is destructive and will delete all status information. You will need to re-run `pearbot setup` to rebuild the pool.'
       end
 
       def self.call(client, data, match)
@@ -135,17 +117,10 @@ module Pearbot
 
     class Pair < PearbotCommand
       command /pair/
-      command /pairings/
-      command /new pair.*/
-      command /draw/
-      command /run/
-      command /next/
-      command /round/
 
       help do
         title 'pair'
-        desc 'ask me to draw the next round of pairings'
-        long_desc 'Runs a new round of pairing with all active participants from the channel pool. Snoozed partipants will be ignored.'
+        desc 'Pair up all active participants from the channel pool. Any currently snoozed partipants will not be included.'
       end
 
       def self.call(client, data, match)
@@ -174,19 +149,12 @@ module Pearbot
     end
 
     class Reminder < PearbotCommand
-      command /remind/
       command /reminder/
-      command /last/
-      command /replay/
-      command /repeat/
-      command /again/
-      command /who .* paired/
-      command /who .* pair/
+      command /who .*/
 
       help do
-        title 'remind'
-        desc 'ask me to remind you about the last round of pairs'
-        long_desc 'Shows the results of the last pairing round again.'
+        title 'reminder / who did [someone] pair with'
+        desc 'Print the results of the last round of pairings.'
       end
 
       def self.call(client, data, match)
@@ -211,11 +179,9 @@ module Pearbot
       match /snooze ?(me)/
       match /snooze <@?(\w+)>/
 
-
       help do
-        title 'snooze me/@user'
-        desc 'ask to be snoozed or snooze another user to temporarily turn off pairing in this pool'
-        long_desc 'Temporarily disables pairing for a given user within this channel pool.'
+        title 'snooze me/[@user]'
+        desc 'Temporarily disable pairing for either yourself or a given user from the pool.'
       end
 
       def self.call(client, data, match)
@@ -238,8 +204,7 @@ module Pearbot
 
       help do
         title 'resume me/@user'
-        desc 'ask to resume yourself or another user to continue pairing in this pool'
-        long_desc 'Re-enables pairing for a given user within this channel pool.'
+        desc 'Re-enables pairing for either yourself or a given user from the pool.'
       end
 
       def self.call(client, data, match)
