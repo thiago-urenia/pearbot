@@ -1,5 +1,4 @@
 class Grouping < ApplicationRecord
-  self.table_name = "pairings"
   belongs_to :round
   has_and_belongs_to_many :participants
 
