@@ -8,7 +8,7 @@ class RoundCreator
   def create
     @round = Round.create(pool: @pool)
 
-    sliced_participants.reverse.each { |participants|  @round.pairings.create(participants: participants) }
+    sliced_participants.reverse.each { |participants|  @round.groupings.create(participants: participants) }
     @round
   end
 

@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :pairing do
+  factory :grouping do
     association :round
   end
 end

@@ -1,7 +1,7 @@
 class Participant < ApplicationRecord
   has_many :pool_entries
   has_many :pools, through: :pool_entries
-  has_and_belongs_to_many :pairings
+  has_and_belongs_to_many :groupings
 
   validates :slack_user_id, presence: true, uniqueness: true
 

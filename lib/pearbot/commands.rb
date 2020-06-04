@@ -137,11 +137,11 @@ module Pearbot
           client.say(channel: data.channel, text: "<@#{participant.slack_user_id}> looks like you're on your own 😶", gif: 'alone')
 
         elsif round = ::RoundCreator.new(pool).create
-          formatted_pairings = round.pairings.map(&:to_mentions).join("\n")
+          formatted_groupings = round.groupings.map(&:to_mentions).join("\n")
 
           client.say(
             channel: data.channel,
-            text: "👯‍♀️The next round of pairs are:\n#{formatted_pairings}",
+            text: "👯‍♀️The next round of pairs are:\n#{formatted_groupings}",
             gif: 'friendship'
           )
         end
@@ -163,10 +163,10 @@ module Pearbot
         if pool.blank?
           client.say(channel: data.channel, text: "🙅‍♀️No pool for <##{data.channel}> exists.", gif: 'no')
         elsif pool.rounds.any?
-          formatted_pairings = pool.latest_round.pairings.map { |pairing| "> #{pairing.to_names}" }.join("\n")
+          formatted_groupings = pool.latest_round.groupings.map { |grouping| "> #{grouping.to_names}" }.join("\n")
           client.say(
             channel: data.channel,
-            text: "🍐Last drew pairs: #{format_date_time(pool.latest_round.created_at)}\n#{formatted_pairings}",
+            text: "🍐Last draw: #{format_date_time(pool.latest_round.created_at)}\n#{formatted_groupings}",
             gif: 'party'
           )
         else
