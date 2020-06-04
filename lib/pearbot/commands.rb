@@ -30,7 +30,7 @@ module Pearbot
 
       help do
         title 'setup'
-        desc 'Start a new pairing pool for the current channel, you will only need to do setup the pool once.'
+        desc 'Start a new drawing pool for the current channel, you will only need to do setup the pool once.'
       end
 
       def self.call(client, data, match)
@@ -76,7 +76,7 @@ module Pearbot
 
       help do
         title 'status'
-        desc 'Display status information about the pool members and when they were last paired.'
+        desc 'Display status information about the pool members and when they were last drawn.'
       end
 
       def self.call(client, data, match)
@@ -88,7 +88,7 @@ module Pearbot
           summary = ":janet: There are currently #{pool.reload.participants.count} participants enrolled in the <##{data.channel}> pool"
           summary += "\n> 👋 *Available*: #{pool.list_available_participants}" if pool.available_participants.any?
           summary += "\n> 🛌 *Snoozed*: #{pool.list_snoozed_participants}" if pool.snoozed_participants.any?
-          summary += "\n🍐 Last drew pairs: #{format_date_time(pool.latest_round.created_at)}" if pool.rounds.any?
+          summary += "\n🍐 Last draw: #{format_date_time(pool.latest_round.created_at)}" if pool.rounds.any?
 
           client.say(channel: data.channel, text: summary, gif: 'janet')
         end
@@ -154,7 +154,7 @@ module Pearbot
 
       help do
         title 'reminder / who did [someone] pair with'
-        desc 'Print the results of the last round of pairings.'
+        desc 'Print the results of the last draw.'
       end
 
       def self.call(client, data, match)
@@ -181,7 +181,7 @@ module Pearbot
 
       help do
         title 'snooze me/[@user]'
-        desc 'Temporarily disable pairing for either yourself or a given user from the pool.'
+        desc 'Temporarily disable drawing for either yourself or a given user from the pool.'
       end
 
       def self.call(client, data, match)
@@ -193,7 +193,7 @@ module Pearbot
         elsif participant.blank?
           client.say(channel: data.channel, text: "🙅‍♀️Can't find that user ", gif: 'mystery')
         elsif participant.snooze_pool(pool)
-          client.say(channel: data.channel, text: "Snoozed pairing for #{participant.slack_user.real_name} in <##{data.channel}>. 😴", gif: 'sleep')
+          client.say(channel: data.channel, text: "Snoozed drawing for #{participant.slack_user.real_name} in <##{data.channel}>. 😴", gif: 'sleep')
         end
       end
     end
@@ -204,7 +204,7 @@ module Pearbot
 
       help do
         title 'resume me/@user'
-        desc 'Re-enables pairing for either yourself or a given user from the pool.'
+        desc 'Re-enables drawing for either yourself or a given user from the pool.'
       end
 
       def self.call(client, data, match)
@@ -216,7 +216,7 @@ module Pearbot
         elsif participant.blank?
           client.say(channel: data.channel, text: "🙅‍♀️Can't find that user ", gif: 'mystery')
         elsif participant.resume_pool(pool)
-          client.say(channel: data.channel, text: "Resumed pairing for #{participant.slack_user.real_name} in <##{data.channel}>. 😊", gif: 'awake')
+          client.say(channel: data.channel, text: "Resumed drawing for #{participant.slack_user.real_name} in <##{data.channel}>. 😊", gif: 'awake')
         end
       end
     end
