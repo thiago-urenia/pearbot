@@ -15,10 +15,11 @@ class RoundCreator
   private
 
   def sliced_participants
+    return [] unless randomised_participants.present?
     slice = randomised_participants.each_slice(2).to_a
     if slice.last.size == 1
       slice.first << slice.pop
-      slice.first.flatten!
+      slice.first&.flatten!
     end
     slice
   end

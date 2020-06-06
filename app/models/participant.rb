@@ -6,17 +6,21 @@ class Participant < ApplicationRecord
   validates :slack_user_id, presence: true, uniqueness: true
 
   def self.mention_list(participants)
-    mentions = participants.map{ |participant| "<@#{participant.slack_user_id}>" }
-    mentions.to_sentence
+    mentions = participants.map{ |participant| participant.mention }
+    mentions.to_sentence(last_word_connector: " and ")
   end
 
   def self.name_list(participants)
     names = participants.map{ |participant| participant.name }
-    names.to_sentence
+    names.to_sentence(last_word_connector: " and ")
   end
 
   def slack_user
     Pearbot::SlackApi::User.new(slack_user_id)
+  end
+
+  def mention
+    "<@#{slack_user_id}>"
   end
 
   def name
