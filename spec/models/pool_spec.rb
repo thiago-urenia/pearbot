@@ -29,6 +29,26 @@ describe Pool do
     allow(pool).to receive(:slack_channel).and_return(slack_channel)
   end
 
+  describe ".find_by_channel_id_and_refresh" do
+    subject { described_class.find_by_channel_id_and_refresh(channel_id) }
+    before { allow_any_instance_of(Pool).to receive(:refresh_participants) }
+
+    context "when pool is found" do
+      let(:channel_id) { pool.slack_channel_id }
+      it { is_expected.to eq pool }
+
+      it "refreshes the pool" do
+        subject
+        expect(subject).to have_received(:refresh_participants)
+      end
+    end
+
+    context "when no pool found" do
+      let(:channel_id) { "foo" }
+      it { is_expected.to be nil }
+    end
+  end
+
   describe "#load_participants" do
     context "for participants who are already known to the database" do
       before do
