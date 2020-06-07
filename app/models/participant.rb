@@ -27,6 +27,10 @@ class Participant < ApplicationRecord
     slack_user.real_name
   end
 
+  def in_pool?(pool)
+    pools.include?(pool) if pool.present?
+  end
+
   def join_pool(pool)
     PoolEntry.create(participant: self, pool: pool)
   end

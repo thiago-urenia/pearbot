@@ -106,6 +106,24 @@ describe Participant do
     it { is_expected.to eq slack_user.real_name }
   end
 
+  describe "#in_pool?" do
+    subject { participant.in_pool?(pool) }
+
+    context "when there is no pool" do
+      let(:pool) { nil }
+      it { is_expected.to be nil }
+    end
+
+    context "when participant is in the pool" do
+      before { participant.join_pool(pool) }
+      it { is_expected.to be true }
+    end
+
+    context "when the participant is not in the pool" do
+      it { is_expected.to be false }
+    end
+  end
+
   describe "#join_pool" do
     it "creates a new entry for the participant in the given pool" do
       subject.join_pool(pool)

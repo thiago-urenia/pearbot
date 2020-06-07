@@ -2,13 +2,8 @@ module Pearbot
   module Commands
 
     class PearbotCommand < SlackRubyBot::Commands::Base
-
-      def self.find_user(client, data, match)
-        if match == "me"
-          ::Participant.find_by(slack_user_id: data.user)
-        else
-          ::Participant.find_by(slack_user_id: match)
-        end
+      def self.replace_me_with_id(parsed_id, current_user_id)
+        parsed_id == "me" ? current_user_id : parsed_id
       end
 
       def self.format_date_time(timestamp)
@@ -51,7 +46,7 @@ module Pearbot
       end
 
       def self.call(client, data, match)
-        pool = ::Pool.new(slack_channel_id: data.channel)
+        pool = ::Pool.find_by(slack_channel_id: data.channel)
 
         if pool.present?
           pool.refresh_participants
@@ -180,14 +175,18 @@ module Pearbot
 
       def self.call(client, data, match)
         pool = Pool.find_by_channel_id_and_refresh(data.channel)
-        participant = find_user(client, data, match[1])
+        user_id = replace_me_with_id(match[1], data.user)
+        participant = Participant.find_by(slack_user_id: user_id)
 
         if pool.blank?
           client.say(channel: data.channel, text: "🙅‍♀️No pool for <##{data.channel}> exists ", gif: 'no')
         elsif participant.blank?
-          client.say(channel: data.channel, text: "🙅‍♀️Can't find that user ", gif: 'mystery')
-        elsif participant.snooze_pool(pool)
-          client.say(channel: data.channel, text: "Snoozed drawing for #{participant.slack_user.real_name} in <##{data.channel}>. 😴", gif: 'sleep')
+          client.say(channel: data.channel, text: "🙅‍♀️Can't find that user", gif: 'mystery')
+        elsif !participant.in_pool?(pool)
+          client.say(channel: data.channel, text: "🙅‍♀️#{participant.name} is not in the pool, ask them to join <##{data.channel}> first", gif: 'mystery')
+        else
+          participant.snooze_pool(pool)
+          client.say(channel: data.channel, text: "Snoozed drawing for #{participant.name} in <##{data.channel}>. 😴", gif: 'sleep')
         end
       end
     end
@@ -203,14 +202,18 @@ module Pearbot
 
       def self.call(client, data, match)
         pool = Pool.find_by_channel_id_and_refresh(data.channel)
-        participant = find_user(client, data, match[1])
+        user_id = replace_me_with_id(match[1], data.user)
+        participant = Participant.find_by(slack_user_id: user_id)
 
         if pool.blank?
           client.say(channel: data.channel, text: "🙅‍♀️No pool for <##{data.channel}> exists ", gif: 'no')
         elsif participant.blank?
-          client.say(channel: data.channel, text: "🙅‍♀️Can't find that user ", gif: 'mystery')
-        elsif participant.resume_pool(pool)
-          client.say(channel: data.channel, text: "Resumed drawing for #{participant.slack_user.real_name} in <##{data.channel}>. 😊", gif: 'awake')
+          client.say(channel: data.channel, text: "🙅‍♀️Can't find that user", gif: 'mystery')
+        elsif !participant.in_pool?(pool)
+          client.say(channel: data.channel, text: "🙅‍♀️#{participant.name} is not in the pool, ask them to join <##{data.channel}> first", gif: 'mystery')
+        else
+          participant.resume_pool(pool)
+          client.say(channel: data.channel, text: "Resumed drawing for #{participant.name} in <##{data.channel}>. 😊", gif: 'awake')
         end
       end
     end
