@@ -1,26 +1,34 @@
 class Participant < ApplicationRecord
   has_many :pool_entries
   has_many :pools, through: :pool_entries
-  has_and_belongs_to_many :pairings
+  has_and_belongs_to_many :groupings
 
   validates :slack_user_id, presence: true, uniqueness: true
 
   def self.mention_list(participants)
-    mentions = participants.map{ |participant| "<@#{participant.slack_user_id}>" }
-    mentions.to_sentence
+    mentions = participants.map{ |participant| participant.mention }
+    mentions.to_sentence(last_word_connector: " and ")
   end
 
   def self.name_list(participants)
     names = participants.map{ |participant| participant.name }
-    names.to_sentence
+    names.to_sentence(last_word_connector: " and ")
   end
 
   def slack_user
     Pearbot::SlackApi::User.new(slack_user_id)
   end
 
+  def mention
+    "<@#{slack_user_id}>"
+  end
+
   def name
     slack_user.real_name
+  end
+
+  def in_pool?(pool)
+    pools.include?(pool) if pool.present?
   end
 
   def join_pool(pool)

@@ -9,6 +9,12 @@ class Pool < ApplicationRecord
 
   validates :slack_channel_id, presence: true, uniqueness: true
 
+  def self.find_by_channel_id_and_refresh(slack_channel_id)
+    pool = find_by(slack_channel_id: slack_channel_id)
+    pool.refresh_participants if pool.present?
+    pool
+  end
+
   def slack_channel
     Pearbot::SlackApi::Channel.new(slack_channel_id)
   end

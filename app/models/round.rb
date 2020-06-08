@@ -1,4 +1,4 @@
 class Round < ApplicationRecord
   belongs_to :pool
-  has_many :pairings
+  has_many :groupings
 end

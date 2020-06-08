@@ -1,4 +1,4 @@
-class Pairing < ApplicationRecord
+class Grouping < ApplicationRecord
   belongs_to :round
   has_and_belongs_to_many :participants
 

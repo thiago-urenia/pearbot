@@ -1,5 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Round, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+describe Round do
+  it { should belong_to(:pool) }
+  it { should have_many(:groupings) }
 end

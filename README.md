@@ -60,15 +60,15 @@ You can always say `pearbot help` for a reminder of all of these commands.
 - **hi**: Wave hello to Pearbot to confirm that it is currently running.
 
 #### Pool management
-- **setup**: Start a new pairing pool for the current channel. You will only need to setup the pool once.
+- **setup**: Start a new drawing pool for the current channel. You will only need to setup the pool once.
 - **refresh**: Refresh the pool so it matches the current members of the channel.
-- **status**: Display status information about the pool members and when they were last paired.
+- **status**: Display status information about the pool members and when they were last drawn.
 - **destroy**: Destroy the pool for the current channel. (This is destructive and you will lose any user statuses.)
 
 #### Pairing
 - **pair**: Pair up all active participants from the channel pool.
-- **reminder / who did [someone] pair with**: Print the results of the last round of pairings.
+- **reminder / who did [someone] pair with**: Print the results of the last draw.
 
 #### User preferences
-- **snooze me / snooze [@user]** - Temporarily disable pairing for either yourself or a given user from the pool.
-- **resume me / snooze [@user]** - Re-enable pairing for either yourself or a given user from the pool.
+- **snooze me / snooze [@user]** - Temporarily disable drawing for either yourself or a given user from the pool.
+- **resume me / snooze [@user]** - Re-enable drawing for either yourself or a given user from the pool.

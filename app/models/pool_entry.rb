@@ -5,11 +5,14 @@ class PoolEntry < ApplicationRecord
   scope :available, -> { where(status: :available) }
   scope :snoozed, -> { where(status: :snoozed) }
 
+  SNOOZED = "snoozed".freeze
+  AVAILABLE = "available".freeze
+
   def snooze
-    update(status: :snoozed)
+    update(status: SNOOZED)
   end
 
   def resume
-    update(status: :available)
+    update(status: AVAILABLE)
   end
 end

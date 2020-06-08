@@ -10,25 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_24_112350) do
+ActiveRecord::Schema.define(version: 2020_06_04_192729) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "pairings", force: :cascade do |t|
+  create_table "groupings", force: :cascade do |t|
     t.bigint "round_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["round_id"], name: "index_pairings_on_round_id"
+    t.index ["round_id"], name: "index_groupings_on_round_id"
   end
 
-  create_table "pairings_participants", id: false, force: :cascade do |t|
-    t.bigint "pairing_id", null: false
+  create_table "groupings_participants", id: false, force: :cascade do |t|
+    t.bigint "grouping_id", null: false
     t.bigint "participant_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["pairing_id"], name: "index_pairings_participants_on_pairing_id"
-    t.index ["participant_id"], name: "index_pairings_participants_on_participant_id"
+    t.index ["grouping_id"], name: "index_groupings_participants_on_grouping_id"
+    t.index ["participant_id"], name: "index_groupings_participants_on_participant_id"
   end
 
   create_table "participants", force: :cascade do |t|
