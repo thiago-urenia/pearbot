@@ -16,13 +16,15 @@ module Pearbot
           return
         end
 
-        if sender.exclude_participant(matched_participant)
-          self.reply_in_thread(client, data, text: "🤫 Successfully excluded *#{matched_participant.name}* from future pairings. \n > You can include them at any time by DM-ing me `include [@name]`")
-        else
-          self.reply_in_thread(client, data, text: "Uh oh")
+        if matched_participant == sender
+          self.reply_in_thread(client, data, text: "Soz, You can't exclude yourself!")
+        elsif sender.excluded_participants.include?(matched_participant)
+          self.reply_in_thread(client, data, text: "#{matched_participant.name} is already in your exclusions")
+        elsif Exclusion.create(excluder: sender, excluded_participant: matched_participant)
+          self.reply_in_thread(client, data, text: "🤫 Successfully excluded *#{matched_participant.name}* from future pairings. \n > You can include them at any time by DM-ing me `include [@name]`", gif: "blocked")
         end
 
-        self.reply_in_thread(client, data, text: "🤫 Your current list of exclusions are: #{sender.exclusions_list}")
+        self.reply_in_thread(client, data, text: "Your current list of exclusions are: #{sender.exclusions_list}")
 
       rescue Slack::Web::Api::Errors::UserNotFound
         self.reply_in_thread(client, data, text: "🙅‍♀️Can't find user #{user_id}", gif: 'mystery')
@@ -44,10 +46,15 @@ module Pearbot
           return
         end
 
-        if sender.unexclude_participant(matched_participant)
-          self.reply_in_thread(client, data, text: "🤫 Successfully included *#{participant.name}* for future pairings.")
+        exclusion = sender.exclusions.find_by(excluded_participant: matched_participant)
+
+        if matched_participant == sender
+          self.reply_in_thread(client, data, text: "Soz, You can't be paired with yourself!")
+        elsif exclusion&.destroy
+          self.reply_in_thread(client, data, text: "🤫 Successfully included *#{matched_participant.name}* for future pairings.", gif: "allow")
         end
-        self.reply_in_thread(client, data, text: "🤫 Your current list of exclusions are: #{sender.exclusions_list}")
+
+        self.reply_in_thread(client, data, text: "Your current list of exclusions are: #{sender.exclusions_list}")
 
       rescue Slack::Web::Api::Errors::UserNotFound
         self.reply_in_thread(client, data, text: "🙅‍♀️Can't find user #{user_id}", gif: 'mystery')

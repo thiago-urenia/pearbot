@@ -16,7 +16,7 @@ class Participant < ApplicationRecord
   end
 
   def self.name_list(participants)
-    names = participants.map{ |participant| participant.name }
+    names = participants.map{ |participant| "#{participant.name}" }
     names.to_sentence(last_word_connector: " and ")
   end
 
@@ -29,7 +29,7 @@ class Participant < ApplicationRecord
   end
 
   def name
-    slack_user.real_name
+    "*#{slack_user.real_name}*"
   end
 
   def in_pool?(pool)
@@ -52,20 +52,9 @@ class Participant < ApplicationRecord
     entry(pool).destroy
   end
 
-  def exclude_participant(participant)
-    return if participant == self
-    return if excluded_participants.include?(participant)
-    exclusions.create(excluded_participant: participant)
-  end
-
-  def unexclude_participant(participant)
-    return if participant == self
-    exclusions.find_by(excluded_participant: participant)&.destroy
-  end
-
   def exclusions_list
     return nil unless excluded_participants.any?
-    self.name_list(excluded_participants)
+    self.class.name_list(excluded_participants)
   end
 
   private
