@@ -52,6 +52,22 @@ class Participant < ApplicationRecord
     entry(pool).destroy
   end
 
+  def exclude_participant(participant)
+    return if participant == self
+    return if excluded_participants.include?(participant)
+    exclusions.create(excluded_participant: participant)
+  end
+
+  def unexclude_participant(participant)
+    return if participant == self
+    exclusions.find_by(excluded_participant: participant)&.destroy
+  end
+
+  def exclusions_list
+    return nil unless excluded_participants.any?
+    self.name_list(excluded_participants)
+  end
+
   private
 
   def entry(pool)
