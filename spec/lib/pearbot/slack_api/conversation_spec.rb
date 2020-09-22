@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Pearbot::SlackApi::Channel do
+describe Pearbot::SlackApi::Conversation do
   subject(:channel) { described_class.new "slack_id" }
 
   let(:human) { double(slack_id: "human_member_id", is_bot?: false) }
