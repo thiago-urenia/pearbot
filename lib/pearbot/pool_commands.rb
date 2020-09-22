@@ -1,23 +1,6 @@
 module Pearbot
   module PoolCommands
 
-    class PearbotCommand < SlackRubyBot::Commands::Base
-      def self.replace_me_with_id(parsed_id, current_user_id)
-        parsed_id == "me" ? current_user_id : parsed_id
-      end
-
-      def self.format_date_time(timestamp)
-        unix = timestamp.to_i
-        fallback = timestamp.strftime("%A, %B #{timestamp.day.ordinalize}, %Y at %H.%M UTC")
-
-        "<!date^#{unix}^{date_long_pretty} at {time}|#{fallback}>"
-      end
-
-      def self.channel_message?(channel_id)
-        channel_id.first == "C"
-      end
-    end
-
     class Setup < PearbotCommand
       command /setup/
 
@@ -63,7 +46,6 @@ module Pearbot
         end
       end
     end
-
     class Status < PearbotCommand
       command /status/
 
@@ -87,7 +69,6 @@ module Pearbot
         end
       end
     end
-
     class Destroy < PearbotCommand
       command /destroy/
 
@@ -107,7 +88,6 @@ module Pearbot
         end
       end
     end
-
     class Pair < PearbotCommand
       command /pair/
 
@@ -140,7 +120,6 @@ module Pearbot
         end
       end
     end
-
     class Reminder < PearbotCommand
       command /reminder/
       command /who .*/
@@ -167,7 +146,6 @@ module Pearbot
         end
       end
     end
-
     class Snooze < PearbotCommand
       match /snooze <@?(\w+)>/
 
@@ -200,7 +178,6 @@ module Pearbot
         end
       end
     end
-
     class Resume < PearbotCommand
       match /resume <@?(\w+)>/
 
