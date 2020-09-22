@@ -218,7 +218,7 @@ module Pearbot
         user_id = replace_me_with_id(match[1], data.user)
         participant = Participant.find_by(slack_user_id: user_id)
 
-        if !channel_message?(data.channel) && data.user != participant.slack_user_id
+        if !channel_message?(data.channel) && data.user != participant&.slack_user_id
           client.say(channel: data.channel, text: "You can only resume others in a group Pearbot channel")
           return
         end
