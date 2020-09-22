@@ -1,5 +1,5 @@
 module Pearbot
-  module Commands
+  module PoolCommands
 
     class PearbotCommand < SlackRubyBot::Commands::Base
       def self.replace_me_with_id(parsed_id, current_user_id)
@@ -165,7 +165,6 @@ module Pearbot
     end
 
     class Snooze < PearbotCommand
-      match /snooze ?(me)/
       match /snooze <@?(\w+)>/
 
       help do
@@ -192,7 +191,6 @@ module Pearbot
     end
 
     class Resume < PearbotCommand
-      match /resume ?(me)/
       match /resume <@?(\w+)>/
 
       help do
@@ -217,6 +215,5 @@ module Pearbot
         end
       end
     end
-
   end
 end
