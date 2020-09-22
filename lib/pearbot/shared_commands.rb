@@ -21,15 +21,15 @@ module Pearbot
         end
 
         def self.call(client, data, match)
-          pool = Pool.last
-          pool.refresh_participants if pool.present?
           participant = Participant.find_by(slack_user_id: data.user)
+          pool = participant.pools.last
+          pool.refresh_participants if pool.present?
 
           if pool.blank?
             client.say(channel: data.channel, text: "🙅‍♀️ No pool exists ", gif: 'no')
           else
             participant.snooze_pool(pool)
-            client.say(channel: data.channel, text: "Snoozed drawing for #{participant.name}. 😴", gif: 'sleep')
+            client.say(channel: data.channel, text: "Snoozed drawing for #{participant.name} in <##{pool.slack_channel_id}>. 😴", gif: 'sleep')
           end
         end
       end
@@ -43,15 +43,15 @@ module Pearbot
         end
 
         def self.call(client, data, match)
-          pool = Pool.last
-          pool.refresh_participants if pool.present?
           participant = Participant.find_by(slack_user_id: data.user)
+          pool = participant.pools.last
+          pool.refresh_participants if pool.present?
 
           if pool.blank?
             client.say(channel: data.channel, text: "🙅‍♀️ No pool exists ", gif: 'no')
           else
             participant.resume_pool(pool)
-            client.say(channel: data.channel, text: "Resumed drawing for #{participant.name}. 😊", gif: 'awake')
+            client.say(channel: data.channel, text: "Resumed drawing for #{participant.name} in <##{pool.slack_channel_id}>. 😊", gif: 'awake')
           end
         end
       end
