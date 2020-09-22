@@ -12,6 +12,10 @@ module Pearbot
 
         "<!date^#{unix}^{date_long_pretty} at {time}|#{fallback}>"
       end
+
+      def self.channel_message?(channel_id)
+        channel_id.first == "C"
+      end
     end
 
     class Setup < PearbotCommand
@@ -168,11 +172,16 @@ module Pearbot
       match /snooze <@?(\w+)>/
 
       help do
-        title 'snooze me/[@user]'
+        title 'snooze [@user]'
         desc 'Temporarily disable drawing for either yourself or a given user from the pool.'
       end
 
       def self.call(client, data, match)
+        unless channel_message?(data.channel)
+          client.say(channel: data.channel, text: "You can only snooze others in a group Pearbot channel", gif: 'sorry')
+          return
+        end
+
         pool = Pool.find_by_channel_id_and_refresh(data.channel)
         user_id = replace_me_with_id(match[1], data.user)
         participant = Participant.find_by(slack_user_id: user_id)
@@ -194,11 +203,16 @@ module Pearbot
       match /resume <@?(\w+)>/
 
       help do
-        title 'resume me/@user'
+        title 'resume @user'
         desc 'Re-enables drawing for either yourself or a given user from the pool.'
       end
 
       def self.call(client, data, match)
+        unless channel_message?(data.channel)
+          client.say(channel: data.channel, text: "You can only resume others in a group Pearbot channel", gif: 'sorry')
+          return
+        end
+
         pool = Pool.find_by_channel_id_and_refresh(data.channel)
         user_id = replace_me_with_id(match[1], data.user)
         participant = Participant.find_by(slack_user_id: user_id)
