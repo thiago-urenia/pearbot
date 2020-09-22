@@ -12,6 +12,10 @@ module Pearbot
 
         "<!date^#{unix}^{date_long_pretty} at {time}|#{fallback}>"
       end
+
+      def self.channel_message?(channel_id)
+        channel_id.first == "C"
+      end
     end
 
     class Setup < PearbotCommand
@@ -168,14 +172,21 @@ module Pearbot
       match /snooze <@?(\w+)>/
 
       help do
-        title 'snooze me/[@user]'
+        title 'snooze [@user]'
         desc 'Temporarily disable drawing for either yourself or a given user from the pool.'
       end
 
       def self.call(client, data, match)
-        pool = Pool.find_by_channel_id_and_refresh(data.channel)
         user_id = replace_me_with_id(match[1], data.user)
         participant = Participant.find_by(slack_user_id: user_id)
+
+        if !channel_message?(data.channel) && data.user != participant.slack_user_id
+          client.say(channel: data.channel, text: "You can only snooze others in a group Pearbot channel")
+          return
+        end
+
+        pool = participant.pools.last
+        pool.refresh_participants if pool.present?
 
         if pool.blank?
           client.say(channel: data.channel, text: "🙅‍♀️No pool for <##{data.channel}> exists ", gif: 'no')
@@ -185,7 +196,7 @@ module Pearbot
           client.say(channel: data.channel, text: "🙅‍♀️#{participant.name} is not in the pool, ask them to join <##{data.channel}> first", gif: 'mystery')
         else
           participant.snooze_pool(pool)
-          client.say(channel: data.channel, text: "Snoozed drawing for #{participant.name} in <##{data.channel}>. 😴", gif: 'sleep')
+          client.say(channel: data.channel, text: "Snoozed drawing for #{participant.name} in <##{pool.slack_channel_id}>. 😴", gif: 'sleep')
         end
       end
     end
@@ -194,14 +205,21 @@ module Pearbot
       match /resume <@?(\w+)>/
 
       help do
-        title 'resume me/@user'
+        title 'resume @user'
         desc 'Re-enables drawing for either yourself or a given user from the pool.'
       end
 
       def self.call(client, data, match)
-        pool = Pool.find_by_channel_id_and_refresh(data.channel)
         user_id = replace_me_with_id(match[1], data.user)
         participant = Participant.find_by(slack_user_id: user_id)
+
+        if !channel_message?(data.channel) && data.user != participant.slack_user_id
+          client.say(channel: data.channel, text: "You can only resume others in a group Pearbot channel")
+          return
+        end
+
+        pool = participant.pools.last
+        pool.refresh_participants if pool.present?
 
         if pool.blank?
           client.say(channel: data.channel, text: "🙅‍♀️No pool for <##{data.channel}> exists ", gif: 'no')
@@ -211,7 +229,7 @@ module Pearbot
           client.say(channel: data.channel, text: "🙅‍♀️#{participant.name} is not in the pool, ask them to join <##{data.channel}> first", gif: 'mystery')
         else
           participant.resume_pool(pool)
-          client.say(channel: data.channel, text: "Resumed drawing for #{participant.name} in <##{data.channel}>. 😊", gif: 'awake')
+          client.say(channel: data.channel, text: "Resumed drawing for #{participant.name} in <##{pool.slack_channel_id}>. 😊", gif: 'awake')
         end
       end
     end
