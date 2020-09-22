@@ -1,6 +1,11 @@
 class Participant < ApplicationRecord
   has_many :pool_entries
   has_many :pools, through: :pool_entries
+
+  has_many :exclusions, foreign_key: "excluder"
+  has_many :excluders, through: :exclusions, class_name: "Participant"
+  has_many :excluded_participants, through: :exclusions, class_name: "Participant"
+
   has_and_belongs_to_many :groupings
 
   validates :slack_user_id, presence: true, uniqueness: true
