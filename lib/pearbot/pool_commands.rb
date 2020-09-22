@@ -130,11 +130,12 @@ module Pearbot
           client.say(channel: data.channel, text: "<@#{participant.slack_user_id}> looks like you're on your own 😶", gif: 'alone')
 
         elsif round = ::RoundCreator.new(pool).create
-          formatted_groupings = round.groupings.map(&:to_mentions).join("\n")
+          groupings = round.groupings
+          groupings.map(&:send_intro)
 
           client.say(
             channel: data.channel,
-            text: "👯‍♀️The next round of pairs are:\n#{formatted_groupings}",
+            text: "👯‍♀️ I've sent out chat invitations to #{ActionController::Base.helpers.pluralize(groupings.count, 'pair')}, check your DMs folks!",
             gif: 'friendship'
           )
         end
@@ -185,8 +186,12 @@ module Pearbot
           return
         end
 
-        pool = participant.pools.last
-        pool.refresh_participants if pool.present?
+        if channel_message?(data.channel)
+          pool = Pool.find_by_channel_id_and_refresh(data.channel)
+        else
+          pool = participant.pools.last
+          pool.refresh_participants if pool.present?
+        end
 
         if pool.blank?
           client.say(channel: data.channel, text: "🙅‍♀️No pool for <##{data.channel}> exists ", gif: 'no')
@@ -218,8 +223,12 @@ module Pearbot
           return
         end
 
-        pool = participant.pools.last
-        pool.refresh_participants if pool.present?
+        if channel_message?(data.channel)
+          pool = Pool.find_by_channel_id_and_refresh(data.channel)
+        else
+          pool = participant.pools.last
+          pool.refresh_participants if pool.present?
+        end
 
         if pool.blank?
           client.say(channel: data.channel, text: "🙅‍♀️No pool for <##{data.channel}> exists ", gif: 'no')

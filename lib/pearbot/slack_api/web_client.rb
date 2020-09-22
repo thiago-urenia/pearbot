@@ -27,6 +27,14 @@ module Pearbot
           .fetch(:user)
       end
 
+      def open_conversation_for(participants)
+        client.conversations_open(users: participants.map(&:slack_user_id).join(','))
+      end
+
+      def send_message(text, conversation)
+        client.chat_postMessage(text: text, channel: conversation)
+      end
+
       private
 
       def client

@@ -19,6 +19,11 @@ module Pearbot
         WebClient.new.conversation_members(slack_id)
       end
 
+      def self.open_conversation_for(participants)
+        channel = WebClient.new.open_conversation_for(participants)
+        Conversation.new(channel.channel.id)
+      end
+
       def info
         @info ||= self.class.find_info(slack_id)
       end
@@ -41,6 +46,10 @@ module Pearbot
 
       def member_user_ids
         member_users.map(&:slack_id)
+      end
+
+      def send_message(text)
+        WebClient.new.send_message(text, @slack_id)
       end
 
       private
