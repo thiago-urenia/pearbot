@@ -179,7 +179,12 @@ module Pearbot
           client.say(channel: data.channel, text: "🙅‍♀️#{participant.name} is not in the pool, ask them to join <##{data.channel}> first", gif: 'mystery')
         else
           participant.snooze_pool(pool)
-          client.say(channel: data.channel, text: "Snoozed drawing for #{participant.name} in <##{pool.slack_channel_id}>. 😴", gif: 'sleep')
+          client.say(channel: data.channel, text: "Snoozed drawing for #{participant.name} in <##{pool.slack_channel_id}>. 😴")
+          sender = Participant.find_by(slack_user_id: data.user)
+
+          if sender != participant
+            Pearbot::SlackApi::Conversation.open_conversation_for([participant]).send_message("#{sender.name} snoozed you in <##{data.channel}>")
+          end
         end
       end
     end
@@ -215,7 +220,13 @@ module Pearbot
           client.say(channel: data.channel, text: "🙅‍♀️#{participant.name} is not in the pool, ask them to join <##{data.channel}> first", gif: 'mystery')
         else
           participant.resume_pool(pool)
-          client.say(channel: data.channel, text: "Resumed drawing for #{participant.name} in <##{pool.slack_channel_id}>. 😊", gif: 'awake')
+          client.say(channel: data.channel, text: "Resumed drawing for #{participant.name} in <##{pool.slack_channel_id}>. 😊")
+
+          sender = Participant.find_by(slack_user_id: data.user)
+
+          if sender != participant
+            Pearbot::SlackApi::Conversation.open_conversation_for([participant]).send_message("#{sender.name} resumed you in <##{data.channel}>")
+          end
         end
       end
     end
