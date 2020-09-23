@@ -1,6 +1,11 @@
 class Participant < ApplicationRecord
   has_many :pool_entries
   has_many :pools, through: :pool_entries
+
+  has_many :exclusions, foreign_key: "excluder"
+  has_many :excluders, through: :exclusions, class_name: "Participant"
+  has_many :excluded_participants, through: :exclusions, class_name: "Participant"
+
   has_and_belongs_to_many :groupings
 
   validates :slack_user_id, presence: true, uniqueness: true
@@ -11,7 +16,7 @@ class Participant < ApplicationRecord
   end
 
   def self.name_list(participants)
-    names = participants.map{ |participant| participant.name }
+    names = participants.map{ |participant| "#{participant.name}" }
     names.to_sentence(last_word_connector: " and ")
   end
 
@@ -24,7 +29,7 @@ class Participant < ApplicationRecord
   end
 
   def name
-    slack_user.real_name
+    "*#{slack_user.real_name}*"
   end
 
   def in_pool?(pool)
@@ -45,6 +50,11 @@ class Participant < ApplicationRecord
 
   def leave_pool(pool)
     entry(pool).destroy
+  end
+
+  def exclusions_list
+    return nil unless excluded_participants.any?
+    self.class.name_list(excluded_participants)
   end
 
   private
