@@ -14,10 +14,10 @@ module Pearbot
         pool.refresh_participants if pool.present?
 
         if pool.blank?
-          client.say(channel: data.channel, text: "🙅‍♀️ No pool exists ", gif: 'no')
+          client.say(channel: data.channel, text: "🚨 I couldn't find a pairing pool for <##{data.channel}>. You may need to run `@pearbot setup` first.")
         else
           participant.snooze_pool(pool)
-          client.say(channel: data.channel, text: "Snoozed drawing for #{participant.name} in <##{pool.slack_channel_id}>. 😴", gif: 'sleep')
+          client.say(channel: data.channel, text: "⏸ Snoozed pairings for #{participant.name} in <##{pool.slack_channel_id}>.", gif: 'sleep')
         end
       end
     end
@@ -35,10 +35,10 @@ module Pearbot
         pool.refresh_participants if pool.present?
 
         if pool.blank?
-          client.say(channel: data.channel, text: "🙅‍♀️ No pool exists ", gif: 'no')
+          client.say(channel: data.channel, text: "🚨 I couldn't find a pairing pool for <##{data.channel}>. You may need to run `@pearbot setup` first.")
         else
           participant.resume_pool(pool)
-          client.say(channel: data.channel, text: "Resumed drawing for #{participant.name} in <##{pool.slack_channel_id}>. 😊", gif: 'awake')
+          client.say(channel: data.channel, text: "⏩ Resumed pairings for #{participant.name} in <##{pool.slack_channel_id}>.", gif: 'awake')
         end
       end
     end
