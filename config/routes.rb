@@ -1,3 +1,3 @@
 Rails.application.routes.draw do
-  get 'rounds/create'
+  root 'root#index'
 end

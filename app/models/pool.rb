@@ -2,15 +2,21 @@ class Pool < ApplicationRecord
   has_many :pool_entries, dependent: :destroy
 
   has_many :participants, through: :pool_entries
-  has_many :available_entries, -> { where(status: "available") }, source: :participants, class_name: "PoolEntry"
-  has_many :snoozed_entries, -> { where(status: "snoozed") }, source: :participants, class_name: "PoolEntry"
+  has_many :available_entries, -> { where(status: :available) }, source: :participants, class_name: "PoolEntry"
+  has_many :snoozed_entries, -> { where(status: :snoozed) }, source: :participants, class_name: "PoolEntry"
 
   has_many :rounds
 
-  validates :slack_channel_id, uniqueness: true
+  validates :slack_channel_id, presence: true, uniqueness: true
+
+  def self.find_by_channel_id_and_refresh(slack_channel_id)
+    pool = find_by(slack_channel_id: slack_channel_id)
+    pool.refresh_participants if pool.present?
+    pool
+  end
 
   def slack_channel
-    Pearbot::SlackApi::Channel.new(slack_channel_id)
+    Pearbot::SlackApi::Conversation.new(slack_channel_id)
   end
 
   def load_participants
@@ -32,7 +38,7 @@ class Pool < ApplicationRecord
   end
 
   def list_available_participants
-    Participant.mention_list(available_participants)
+    Participant.name_list(available_participants)
   end
 
   def snoozed_participants
@@ -40,7 +46,7 @@ class Pool < ApplicationRecord
   end
 
   def list_snoozed_participants
-    Participant.mention_list(snoozed_participants)
+    Participant.name_list(snoozed_participants)
   end
 
   def latest_round
@@ -48,10 +54,6 @@ class Pool < ApplicationRecord
   end
 
   private
-
-  def client
-    @client ||= Pearbot::SlackWebClient.new
-  end
 
   def remove(user_ids)
     user_ids.each do |user_id|

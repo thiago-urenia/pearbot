@@ -5,10 +5,9 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+@pool = FactoryBot.create(:pool)
 
-@pool = Pool.create(slack_channel_id: "Fabulous Channel")
+11.times { FactoryBot.create(:pool_entry, :available, pool: @pool) }
+FactoryBot.create(:pool_entry, :snoozed, pool: @pool)
 
-11.times { PoolEntry.create(pool: @pool, participant: Participant.create(slack_user_id: SecureRandom.hex)) }
-PoolEntry.create(pool: @pool, participant: Participant.create(slack_user_id: SecureRandom.hex), status: 'unavailable')
-
-@round = Round.create(pool: @pool)
+@round = FactoryBot.create(:round)
