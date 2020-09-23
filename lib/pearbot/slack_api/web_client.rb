@@ -32,7 +32,7 @@ module Pearbot
       end
 
       def send_message(text, conversation)
-        client.chat_postMessage(text: text, channel: conversation)
+        client.chat_postMessage(text: text, channel: conversation, as_user: true)
       end
 
       private
