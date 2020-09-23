@@ -9,4 +9,9 @@ class Grouping < ApplicationRecord
   def to_names
     Participant.name_list(participants)
   end
+
+  def send_intro
+    conversation = Pearbot::SlackApi::Conversation.open_conversation_for(participants)
+    conversation.send_message("You've been invited to chat by Pearbot!")
+  end
 end

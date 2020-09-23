@@ -135,7 +135,8 @@ describe "commands" do
         it "runs a new round" do
           expect(pool).to receive(:refresh_participants)
           expect(Round.count).to eq 0
-          expect(command).to respond_with_slack_message /The next round of pairs are/
+          expect_any_instance_of(Grouping).to receive(:send_intro).and_return(nil)
+          expect(message: command, channel: "Channel").to respond_with_slack_message /I've sent out chat invitations to /
           expect(Round.count).to eq 1
         end
       end
@@ -216,14 +217,16 @@ describe "commands" do
           context "and they are in the current pool" do
             before { another_user.join_pool(pool) }
             it "snoozes them from the current pool" do
-              expect(command).to respond_with_slack_message /Snoozed drawing for #{another_user.name} in <#channel>/
+              expect(message: command, channel: "Channel")
+                .to respond_with_slack_message /Snoozed drawing for #{another_user.name} in/
               expect(pool.snoozed_participants).to include another_user
             end
           end
 
           context "and they are not in the current pool" do
             it "responds that this user is not in the pool" do
-              expect(command).to respond_with_slack_message /#{another_user.name} is not in the pool, ask them to join <#channel>/
+              expect(message: command, channel: "Channel")
+                .to respond_with_slack_message /#{another_user.name} is not in the pool, ask them to join <#Channel>/
             end
           end
         end
@@ -231,7 +234,8 @@ describe "commands" do
         context "when no user is found" do
           before { another_user.destroy }
           it "responds that no user was found" do
-            expect(command).to respond_with_slack_message /Can't find that user/
+            expect(message: command, channel: "Channel")
+              .to respond_with_slack_message /Can't find that user/
           end
         end
       end
@@ -282,14 +286,16 @@ describe "commands" do
           context "and they are in the current pool" do
             before { another_user.join_pool(pool).snooze }
             it "marks you as available in the current pool" do
-              expect(command).to respond_with_slack_message /Resumed drawing for #{another_user.name} in <#channel>/
+              expect(message: command, channel: "Channel")
+                .to respond_with_slack_message /Resumed drawing for #{another_user.name} in/
               expect(pool.available_participants).to include another_user
             end
           end
 
           context "and they are not in the current pool" do
             it "responds that this user is not in the pool" do
-              expect(command).to respond_with_slack_message /#{another_user.name} is not in the pool, ask them to join <#channel>/
+              expect(message: command, channel: "Channel")
+                .to respond_with_slack_message /#{another_user.name} is not in the pool, ask them to join <#Channel>/
             end
           end
         end
@@ -297,7 +303,8 @@ describe "commands" do
         context "when no user is found" do
           before { another_user.destroy }
           it "responds that no user was found" do
-            expect(command).to respond_with_slack_message /Can't find that user/
+            expect(message: command, channel: "Channel")
+              .to respond_with_slack_message /Can't find that user/
           end
         end
       end

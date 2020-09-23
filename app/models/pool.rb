@@ -16,7 +16,7 @@ class Pool < ApplicationRecord
   end
 
   def slack_channel
-    Pearbot::SlackApi::Channel.new(slack_channel_id)
+    Pearbot::SlackApi::Conversation.new(slack_channel_id)
   end
 
   def load_participants
