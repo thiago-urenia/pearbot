@@ -149,9 +149,10 @@ module Pearbot
     end
     class Snooze < PearbotCommand
       match /snooze <@?(\w+)>/
+      match /snooze ?(me)/
 
       help do
-        title 'snooze [@user]'
+        title 'snooze me/@user'
         desc 'Temporarily disable drawing for either yourself or a given user from the pool.'
       end
 
@@ -159,35 +160,35 @@ module Pearbot
         user_id = replace_me_with_id(match[1], data.user)
         participant = Participant.find_by(slack_user_id: user_id)
 
-        if !channel_message?(data.channel) && data.user != participant.slack_user_id
+        conversation = self.conversation(data.channel)
+
+        if !conversation.is_channel? && data.user != participant.slack_user_id
           client.say(channel: data.channel, text: "You can only snooze others in a group Pearbot channel")
           return
         end
 
-        if channel_message?(data.channel)
+        if conversation.is_channel?
           pool = Pool.find_by_channel_id_and_refresh(data.channel)
-        else
-          pool = participant.pools.last
-          pool.refresh_participants if pool.present?
         end
 
         if pool.blank?
-          client.say(channel: data.channel, text: "🙅‍♀️No pool for <##{data.channel}> exists ", gif: 'no')
+          client.say(channel: data.channel, text: "🙅‍♀️No pool for <##{data.channel}> exists ")
         elsif participant.blank?
-          client.say(channel: data.channel, text: "🙅‍♀️Can't find that user", gif: 'mystery')
+          client.say(channel: data.channel, text: "🙅‍♀️Can't find that user")
         elsif !participant.in_pool?(pool)
-          client.say(channel: data.channel, text: "🙅‍♀️#{participant.name} is not in the pool, ask them to join <##{data.channel}> first", gif: 'mystery')
+          client.say(channel: data.channel, text: "🙅‍♀️#{participant.name} is not in the pool, ask them to join <##{data.channel}> first")
         else
           participant.snooze_pool(pool)
-          client.say(channel: data.channel, text: "Snoozed drawing for #{participant.name} in <##{pool.slack_channel_id}>. 😴", gif: 'sleep')
+          client.say(channel: data.channel, text: "Snoozed drawing for #{participant.name} in <##{pool.slack_channel_id}>. 😴")
         end
       end
     end
     class Resume < PearbotCommand
       match /resume <@?(\w+)>/
+      match /resume ?(me)/
 
       help do
-        title 'resume @user'
+        title 'resume me/@user'
         desc 'Re-enables drawing for either yourself or a given user from the pool.'
       end
 
@@ -195,27 +196,26 @@ module Pearbot
         user_id = replace_me_with_id(match[1], data.user)
         participant = Participant.find_by(slack_user_id: user_id)
 
-        if !channel_message?(data.channel) && data.user != participant&.slack_user_id
+        conversation = self.conversation(data.channel)
+
+        if !conversation.is_channel? && data.user != participant&.slack_user_id
           client.say(channel: data.channel, text: "You can only resume others in a group Pearbot channel")
           return
         end
 
-        if channel_message?(data.channel)
+        if conversation.is_channel?
           pool = Pool.find_by_channel_id_and_refresh(data.channel)
-        else
-          pool = participant.pools.last
-          pool.refresh_participants if pool.present?
         end
 
         if pool.blank?
-          client.say(channel: data.channel, text: "🙅‍♀️No pool for <##{data.channel}> exists ", gif: 'no')
+          client.say(channel: data.channel, text: "🙅‍♀️No pool for <##{data.channel}> exists ")
         elsif participant.blank?
-          client.say(channel: data.channel, text: "🙅‍♀️Can't find that user", gif: 'mystery')
+          client.say(channel: data.channel, text: "🙅‍♀️Can't find that user")
         elsif !participant.in_pool?(pool)
-          client.say(channel: data.channel, text: "🙅‍♀️#{participant.name} is not in the pool, ask them to join <##{data.channel}> first", gif: 'mystery')
+          client.say(channel: data.channel, text: "🙅‍♀️#{participant.name} is not in the pool, ask them to join <##{data.channel}> first")
         else
           participant.resume_pool(pool)
-          client.say(channel: data.channel, text: "Resumed drawing for #{participant.name} in <##{pool.slack_channel_id}>. 😊", gif: 'awake')
+          client.say(channel: data.channel, text: "Resumed drawing for #{participant.name} in <##{pool.slack_channel_id}>. 😊")
         end
       end
     end
