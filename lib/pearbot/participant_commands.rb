@@ -21,7 +21,7 @@ module Pearbot
         elsif sender.excluded_participants.include?(matched_participant)
           self.reply_in_thread(client, data, text: "#{matched_participant.name} is already in your exclusions")
         elsif Exclusion.create(excluder: sender, excluded_participant: matched_participant)
-          self.reply_in_thread(client, data, text: "🤫 Successfully excluded *#{matched_participant.name}* from future pairings. \n > You can include them at any time by DM-ing me `include [@name]`", gif: "blocked")
+          self.reply_in_thread(client, data, text: "🤫 Successfully excluded #{matched_participant.name} from future pairings. \n  _Tip: You can include them at any time by DM-ing me `include [@name]`_", gif: "blocked")
         end
 
         self.reply_in_thread(client, data, text: "Your current list of exclusions are: #{sender.exclusions_list}")
