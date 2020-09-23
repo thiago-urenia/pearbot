@@ -60,5 +60,71 @@ module Pearbot
         self.reply_in_thread(client, data, text: "🙅‍♀️Can't find user #{user_id}", gif: 'mystery')
       end
     end
+
+    class Snooze < PearbotCommand
+      match /snooze all/
+
+      help do
+        title 'snooze all'
+        desc '[Available in DMs with Pearbot only] Temporarily disable drawing for yourself in all Pearbot channels you belong to.'
+      end
+
+      def self.call(client, data, match)
+        participant = Participant.find_by(slack_user_id: data.user)
+        pools = participant.pools
+
+        conversation = self.conversation(data.channel)
+
+        if !conversation.is_direct_message?
+          self.reply_in_thread(client, data, text: "🙅‍♀️ Speak to @pearbot directly to use this command.")
+          return
+        end
+
+        if pools.empty?
+          client.say(channel: data.channel, text: "🙅‍♀️ You don't belong to any pools.")
+        else
+          pools.each do |pool|
+            participant.snooze_pool(pool)
+          end
+
+          pool_tags = pools.map { |pool| "<##{pool.slack_channel_id}>" }.join(', ')
+
+          client.say(channel: data.channel, text: "You've been temporarily snoozed in #{pool_tags}>. 😴")
+        end
+      end
+    end
+
+    class Resume < PearbotCommand
+      match /resume all/
+
+      help do
+        title 'resume all'
+        desc '[Available in DMs with Pearbot only] Re-enables drawing for yourself in all Pearbot channels you belong to.'
+      end
+
+      def self.call(client, data, match)
+        participant = Participant.find_by(slack_user_id: data.user)
+        pools = participant.pools
+
+        conversation = self.conversation(data.channel)
+
+        if !conversation.is_direct_message?
+          self.reply_in_thread(client, data, text: "🙅‍♀️ Speak to @pearbot directly to use this command.")
+          return
+        end
+
+        if pools.empty?
+          client.say(channel: data.channel, text: "🙅‍♀️ You don't belong to any pools.")
+        else
+          pools.each do |pool|
+            participant.resume_pool(pool)
+          end
+        end
+
+        pool_tags = pools.map { |pool| "<##{pool.slack_channel_id}>" }.join(', ')
+
+        client.say(channel: data.channel, text: "Resumed drawing in #{pool_tags}>. 😊")
+      end
+    end
   end
 end

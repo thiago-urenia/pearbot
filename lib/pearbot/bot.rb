@@ -4,6 +4,5 @@ module Pearbot
     require_relative 'pearbot_command.rb'
     require_relative 'pool_commands.rb'
     require_relative 'participant_commands.rb'
-    require_relative 'shared_commands.rb'
   end
 end
