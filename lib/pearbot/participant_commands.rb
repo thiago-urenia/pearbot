@@ -12,7 +12,7 @@ module Pearbot
     #     matched_participant = Participant.find_or_initialize_by(slack_user_id: matched_user_id)
 
     #     if !conversation.is_direct_message?
-    #       self.reply_in_thread(client, data, text: "🚨 DM @pearbot privately to manage your exclusions.")
+    #       self.reply_in_thread(client, data, text: "🚨 DM <@pearbot> privately to manage your exclusions.")
     #       return
     #     end
 
@@ -42,7 +42,7 @@ module Pearbot
     #     matched_participant = Participant.find_or_initialize_by(slack_user_id: matched_user_id)
 
     #     if !conversation.is_direct_message?
-    #       self.reply_in_thread(client, data, text: "🚨 DM @pearbot privately to manage your exclusions.")
+    #       self.reply_in_thread(client, data, text: "🚨 DM <@pearbot> privately to manage your exclusions.")
     #       return
     #     end
 
@@ -76,7 +76,7 @@ module Pearbot
         conversation = self.conversation(data.channel)
 
         if !conversation.is_direct_message?
-          self.reply_in_thread(client, data, text: "🚨 Speak to @pearbot directly to use this command.")
+          self.reply_in_thread(client, data, text: "🚨 Speak to <@pearbot> directly to use this command.")
           return
         end
 
@@ -109,7 +109,7 @@ module Pearbot
         conversation = self.conversation(data.channel)
 
         if !conversation.is_direct_message?
-          self.reply_in_thread(client, data, text: "🚨 Speak to @pearbot directly to use this command.")
+          self.reply_in_thread(client, data, text: "🚨 Speak to <@pearbot> directly to use this command.")
           return
         end
 
