@@ -114,7 +114,8 @@ GEM
     nio4r (2.5.1)
     nokogiri (1.10.4)
       mini_portile2 (~> 2.4.0)
-    puma (3.12.1)
+    puma (4.3.9)
+      nio4r (~> 2.0)
     rack (2.0.7)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
@@ -194,7 +195,7 @@ DEPENDENCIES
   ffaker
   listen (>= 3.0.5, < 3.2)
   mysql2 (>= 0.4.4)
-  puma (~> 3.11)
+  puma (~> 4.3)
   rails (~> 6.0.0)
   slack-ruby-bot
   spring
